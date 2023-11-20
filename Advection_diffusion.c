@@ -201,21 +201,17 @@ void PG_timestep_particle(struct All_variables *E)
 				E->advection.dt_reduced *= 0.5;
 				E->advection.last_sub_iterations++;
 			}
-			/*Changes made by VNB to cap the temperature */
-			if(iredo == 0)
-			  {
-			    for(i = 1; i <= E->lmesh.nno; i++)
-			      {
-				if(E->T[i]>1.0)
-				  {
-				    E->T[i] = 1.0;
-				  }
-			      }
-			  }
-
 
 		} while(iredo == 1 && E->advection.last_sub_iterations <= 5);
-
+		/*Start - Changes made by VNB to cap the temperature */
+		for(i = 1; i <= E->lmesh.nno; i++)
+		      {
+			if(E->T[i]>1)
+			  {
+			    E->T[i] = 1.0;
+			  }
+		      }
+		/*End - Changes made by VNB to cap the temperature */
 
 		count++;
 
@@ -320,21 +316,19 @@ void PG_timestep(struct All_variables *E)
 			E->advection.dt_reduced *= 0.5;
 			E->advection.last_sub_iterations++;
 		}
-		
-		/*Changes made by VNB to cap the temperature */
-		if(iredo == 0)
-		  {
-		    for(i = 1; i <= E->lmesh.nno; i++)
+
+	} while(iredo == 1 && E->advection.last_sub_iterations <= 5);
+
+	/*Start - Changes made by VNB to cap the temperature */
+	for(i = 1; i <= E->lmesh.nno; i++)
 		      {
-			if(E->T[i]>1.0)
+			if(E->T[i]>1)
 			  {
 			    E->T[i] = 1.0;
 			  }
 		      }
-		  }
-
-	} while(iredo == 1 && E->advection.last_sub_iterations <= 5);
-
+	/*End - Changes made by VNB to cap the temperature */
+	
 	E->advection.total_timesteps++;
 	E->monitor.elapsed_time += E->advection.timestep;
 	count++;
